@@ -1,4 +1,4 @@
-require "hostesse/version"
+require 'hostesse/version'
 
 module Hostesse
   # Your code goes here...
