@@ -4,3 +4,5 @@ source :rubygems
 gemspec
 
 gem 'rspec', '~> 2.11.0'
+gem 'guard', '~> 1.5.0'
+gem 'guard-rspec'
