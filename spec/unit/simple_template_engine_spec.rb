@@ -21,11 +21,11 @@ describe Hostesse::SimpleTemplateEngine do
 
   it 'should memoize the result' do
 
-    subject.parse(simple_hosts_filename)
+    first_result = subject.parse(simple_hosts_filename)
 
-    File.stub!(:read).with(simple_hosts_full_filename).and_raise("it shouldn't need to read file again")
+    File.stub(:read).with(simple_hosts_full_filename).and_raise("it shouldn't need to read file again")
 
-    subject.parse(simple_hosts_filename)
+    subject.parse(simple_hosts_filename).should == first_result
 
   end
 
