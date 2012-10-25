@@ -10,13 +10,26 @@ module Hostesse
 
     def parse(filename)
       complete_filename = complete_filename(filename)
-      @parsed[complete_filename] ||= '# ' + complete_filename + "\n" +
-      File.read(complete_filename)
+      if already_parsed? complete_filename
+        @parsed[complete_filename]
+      else
+        @parsed[complete_filename] = prefix(complete_filename) + File.read(complete_filename)
+      end
     end
 
-    def complete_filename(filename)
-      "#{ @base_path }/#{ filename }#{ @hosts_file_suffix }"
-    end
+    private
+
+      def complete_filename(filename)
+        "#{ @base_path }/#{ filename }#{ @hosts_file_suffix }"
+      end
+
+      def prefix(complete_filename)
+        "# #{ complete_filename }\n\n"
+      end
+
+      def already_parsed?(complete_filename)
+        !! @parsed[complete_filename]
+      end
   end
 
 end
