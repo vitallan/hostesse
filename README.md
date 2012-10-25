@@ -1,29 +1,77 @@
-# Hostesse
+Hostesse
+========
 
-TODO: Write a gem description
+Templatable hosts manager
+-------------------------
 
-## Installation
+Define multiple hosts files for your machine using a templating engine and easily switch between them.
 
-Add this line to your application's Gemfile:
+Installation
+------------
 
-    gem 'hostesse'
+Install the gem:
 
-And then execute:
+```bash
+$ gem install hostesse
+```
 
-    $ bundle
+Create a directory for the hosts definitions:
 
-Or install it yourself as:
+```bash
+$ mkdir hosts
+```
 
-    $ gem install hostesse
+Usage
+-----
 
-## Usage
+In the directory created in previous step, create hosts definition files ending with `.hosts`:
 
-TODO: Write usage instructions here
+```
+hosts
+├── production.hosts
+├── qa.hosts
+└── staging.hosts
+```
 
-## Contributing
+Start `hostesse` in that directory:
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+```bash
+$ hostesse
+```
+
+The command line should help you from that.
+
+Templating
+----------
+
+In hosts definition files you can use `{ another-hosts-definition }` and hostess will include it in place:
+
+```
+# hosts-definition
+127.0.0.1 someproject
+```
+
+```
+# another-hosts-definition
+
+{ hosts-definition }
+
+127.0.0.1 someotherproject
+```
+
+will result in:
+
+
+```
+# hosts-definition
+127.0.0.1 someproject
+```
+
+```
+# another-hosts-definition
+
+# hosts-definition
+127.0.0.1 someproject
+
+127.0.0.1 someotherproject
+```

@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Hostesse::VERSION
   gem.authors       = ['Leandro Facchinetti']
   gem.email         = ['leafac@gmail.com']
-  gem.description   = %q{Hosts manager}
-  gem.summary       = %q{Define hosts using a template engine and change between them easily}
+  gem.description   = %q{Templatable hosts manager}
+  gem.summary       = %q{Define multiple hosts files for your machine using a templating engine and easily switch between them}
 
   #TODO: add homepage
   gem.homepage      = ''
