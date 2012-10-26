@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'hostesse'
+require 'readline'
+
+# handle ctrl+c gracefully
+
+stty_save = `stty -g`.chomp
+trap('INT') { system('stty', stty_save); exit }
+
+Readline.completion_append_character = ''
+Readline.completion_proc             = ->(s) {
+  Dir[s + '*'].map { |inode|
+    if File.directory? inode
+      inode + '/'
+    elsif inode =~ /#{ Regexp.quote(Hostesse::DEFAULT_HOSTS_FILE_SUFFIX) }$/
+      inode[0..-Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size.succ]
+    else
+      nil
+    end
+  }.compact
+}
+
+current_hosts = ''
+target_file   = ARGV[0] || '/etc/hosts'
+
+while line = Readline.readline('hostesse> ', true)
+  current_hosts = line unless line.empty?
+
+  unless current_hosts.empty?
+    File.open(target_file, 'w') { |generated_hosts|
+      generated_hosts.write(Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts))
+    }
+  end
+end

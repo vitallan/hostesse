@@ -1,8 +1,10 @@
 module Hostesse
 
+  DEFAULT_HOSTS_FILE_SUFFIX = '.hosts'
+
   class SimpleTemplateEngine
 
-    def initialize(base_path, hosts_file_suffix = '.hosts')
+    def initialize(base_path, hosts_file_suffix = DEFAULT_HOSTS_FILE_SUFFIX)
       @base_path         = File.expand_path base_path
       @hosts_file_suffix = hosts_file_suffix
       @parsed_files      = {}
