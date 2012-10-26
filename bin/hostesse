@@ -8,7 +8,7 @@ target_file   = File.expand_path(ARGV[0] || '/etc/hosts')
 
 puts <<-WELCOME
 
-Welcome to hostesse!
+Welcome to hostesse (#{ Hostesse::VERSION})!
 
 The current target file is #{ target_file }. Note that you need permission to write in this file!
 
