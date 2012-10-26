@@ -2,7 +2,9 @@ require 'spec_helper.rb'
 
 describe Hostesse::SimpleTemplateEngine do
 
-  subject { Hostesse::SimpleTemplateEngine.new(base_path) }
+  subject(:parsed_file)   { engine.parse(filename) }
+
+  let(:engine)            { Hostesse::SimpleTemplateEngine.new(base_path) }
 
   let(:base_path)         { 'spec/support' }
 
@@ -13,13 +15,13 @@ describe Hostesse::SimpleTemplateEngine do
 
     it "shouldn't change a simple file" do
 
-      subject.parse(filename).should match '127.0.0.1 localhost'
+      parsed_file.should match '127.0.0.1 localhost'
 
     end
 
     it 'should prepend the filename as a comment' do
 
-      subject.parse(filename).should match "# #{ complete_filename }"
+      parsed_file.should match "# #{ complete_filename }"
 
     end
   end
@@ -30,7 +32,7 @@ describe Hostesse::SimpleTemplateEngine do
 
     it 'should return an error' do
 
-      subject.parse(filename).should match '# ERROR'
+      parsed_file.should match '# ERROR'
 
     end
 
@@ -41,7 +43,7 @@ describe Hostesse::SimpleTemplateEngine do
     let(:filename) { 'include' }
 
     it 'should include a file' do
-      subject.parse(filename).should match '127.0.0.1 localhost'
+      parsed_file.should match '127.0.0.1 localhost'
     end
 
     describe 'cycles' do
@@ -51,11 +53,9 @@ describe Hostesse::SimpleTemplateEngine do
         let(:filename) { 'include_itself' }
 
         it 'should avoid an infinite loop' do
-          subject.parse(filename).should match '# ERROR'
+          parsed_file.should match '# ERROR'
         end
-
       end
-
     end
   end
 end
