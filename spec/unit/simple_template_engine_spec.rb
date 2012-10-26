@@ -1,3 +1,4 @@
+#encoding: UTF-8
 require 'spec_helper.rb'
 
 describe Hostesse::SimpleTemplateEngine do
@@ -76,6 +77,28 @@ describe Hostesse::SimpleTemplateEngine do
         it 'should avoid an infinite loop' do
           parsed_file.should match '# ERROR'
         end
+      end
+    end
+  end
+
+  describe 'accents' do
+
+    let(:filename) { 'accent' }
+
+    it 'should handle accents properly' do
+
+      parsed_file.should match '# çã'
+
+    end
+
+    describe 'include accents' do
+
+      let(:filename) { 'include_accents' }
+
+      it 'should handle accents in includes properly' do
+
+        parsed_file.should match '# çã'
+
       end
     end
   end

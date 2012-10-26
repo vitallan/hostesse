@@ -4,7 +4,7 @@ require 'hostesse'
 require 'readline'
 
 current_hosts = ''
-target_file   = ARGV[0] || '/etc/hosts'
+target_file   = File.expand_path(ARGV[0] || '/etc/hosts')
 
 puts <<-WELCOME
 
@@ -41,16 +41,23 @@ Readline.completion_proc             = ->(s) {
   }.compact
 }
 
-while line = Readline.readline('hostesse> ', true)
+while line = Readline.readline('hostesse> ', true).strip
   current_hosts = line unless line.empty?
 
   unless current_hosts.empty?
-    File.open(target_file, 'w') { |generated_hosts|
-      parsed_hosts = Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts)
-      generated_hosts.write(parsed_hosts)
-      if parsed_hosts =~ /ERROR/
-        puts "There is a error in your hosts definition. See #{ target_file } for more details"
-      end
-    }
+    begin
+      File.open(target_file, 'w') { |generated_hosts|
+        parsed_hosts = Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts)
+        generated_hosts.write(parsed_hosts)
+        if parsed_hosts =~ /ERROR/
+          puts "There is a error in your hosts definition. See #{ target_file } for more details"
+        end
+      }
+    rescue Errno::EACCES
+      puts "#{ target_file } isn't writable, hosts not saved!"
+      puts
+      puts 'Solve this by running hostesse as root or changing'
+      puts "the permissions for #{ target_file }"
+    end
   end
 end
