@@ -3,10 +3,30 @@
 require 'hostesse'
 require 'readline'
 
+current_hosts = ''
+target_file   = ARGV[0] || '/etc/hosts'
+
+puts <<-WELCOME
+
+Welcome to hostesse!
+
+The current target file is #{ target_file }. Note that you need permission to write in this file!
+
+To change hosts, type the name of the file, without the .hosts suffix.
+Tab completion should help you in this.
+
+To refresh the hosts, hit enter.
+
+WELCOME
+
 # handle ctrl+c gracefully
 
 stty_save = `stty -g`.chomp
-trap('INT') { system('stty', stty_save); exit }
+trap('INT') do
+  puts "\n\nThanks for using hostess!\n:)\n\n"
+  system('stty', stty_save)
+  exit
+end
 
 Readline.completion_append_character = ''
 Readline.completion_proc             = ->(s) {
@@ -21,15 +41,16 @@ Readline.completion_proc             = ->(s) {
   }.compact
 }
 
-current_hosts = ''
-target_file   = ARGV[0] || '/etc/hosts'
-
 while line = Readline.readline('hostesse> ', true)
   current_hosts = line unless line.empty?
 
   unless current_hosts.empty?
     File.open(target_file, 'w') { |generated_hosts|
-      generated_hosts.write(Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts))
+      parsed_hosts = Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts)
+      generated_hosts.write(parsed_hosts)
+      if parsed_hosts =~ /ERROR/
+        puts "There is a error in your hosts definition. See #{ target_file } for more details"
+      end
     }
   end
 end
