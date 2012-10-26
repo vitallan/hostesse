@@ -46,6 +46,18 @@ describe Hostesse::SimpleTemplateEngine do
       parsed_file.should match '127.0.0.1 localhost'
     end
 
+    describe 'multiple includes' do
+
+      let(:filename) { 'multiple_includes' }
+
+      it 'should include all' do
+        parsed_file.should match 'localhost'
+        parsed_file.should match 'sample'
+      end
+
+
+    end
+
     describe 'cycles' do
 
       describe 'file include itself' do

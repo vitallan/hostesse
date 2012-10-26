@@ -32,7 +32,7 @@ module Hostesse
       end
 
       def resolve_includes(hosts)
-        hosts.sub(/\{(.+)\}/) { |include_filename| parse(include_filename[1..-2].strip) }
+        hosts.gsub(/\{(.+)\}/) { |include_filename| parse(include_filename[1..-2].strip) }
       end
 
       def content(complete_filename)
