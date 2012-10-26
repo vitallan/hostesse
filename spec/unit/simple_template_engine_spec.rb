@@ -44,5 +44,18 @@ describe Hostesse::SimpleTemplateEngine do
       subject.parse(filename).should match '127.0.0.1 localhost'
     end
 
+    describe 'cycles' do
+
+      describe 'file include itself' do
+
+        let(:filename) { 'include_itself' }
+
+        it 'should avoid an infinite loop' do
+          subject.parse(filename).should match '# ERROR'
+        end
+
+      end
+
+    end
   end
 end
