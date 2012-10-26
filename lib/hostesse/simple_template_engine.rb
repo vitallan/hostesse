@@ -32,7 +32,13 @@ module Hostesse
       end
 
       def resolve_includes(hosts)
-        hosts.gsub(/\{(.+)\}/) { |include_filename| parse(include_filename[1..-2].strip) }
+        hosts.gsub(/^(.*)\{(.+)\}/) do |include_line|
+          if include_line =~ /^\s*#/
+            include_line
+          else
+            parse(include_line.match(/\{(.+)\}/)[1].strip)
+          end
+        end
       end
 
       def content(complete_filename)

@@ -79,6 +79,16 @@ describe Hostesse::SimpleTemplateEngine do
         end
       end
     end
+
+    describe 'commented include' do
+
+      let(:filename) { 'commented_include' }
+
+      it "should keep the comment and don't render the include" do
+        parsed_file.should match '# { commented_include }'
+      end
+
+    end
   end
 
   describe 'accents' do
