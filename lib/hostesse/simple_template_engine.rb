@@ -5,16 +5,15 @@ module Hostesse
     def initialize(base_path, hosts_file_suffix = '.hosts')
       @base_path         = File.expand_path base_path
       @hosts_file_suffix = hosts_file_suffix
-      @parsed            = {}
     end
 
     def parse(filename)
       complete_filename = complete_filename(filename)
-      if already_parsed? complete_filename
-        @parsed[complete_filename]
-      else
-        @parsed[complete_filename] = prefix(complete_filename) + File.read(complete_filename)
-      end
+      prefix(complete_filename) + if File.exists? complete_filename
+                                    resolve_includes(File.read(complete_filename))
+                                  else
+                                    "# ERROR: #{ complete_filename } doesn't exist"
+                                  end
     end
 
     private
@@ -27,8 +26,8 @@ module Hostesse
         "# #{ complete_filename }\n\n"
       end
 
-      def already_parsed?(complete_filename)
-        !! @parsed[complete_filename]
+      def resolve_includes(hosts)
+        hosts.sub(/\{(.+)\}/) { |include_filename| parse(include_filename[1..-2].strip) }
       end
   end
 

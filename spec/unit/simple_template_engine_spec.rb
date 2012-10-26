@@ -4,32 +4,33 @@ describe Hostesse::SimpleTemplateEngine do
 
   subject { Hostesse::SimpleTemplateEngine.new(base_path) }
 
-  let(:base_path)                      { 'spec/support' }
+  let(:base_path)         { 'spec/support' }
 
-  let(:simple_hosts_filename)          { 'simple' }
-  let(:simple_hosts_complete_filename) { complete_filename(simple_hosts_filename) }
+  let(:filename)          { 'simple' }
+  let(:complete_filename) { File.expand_path("#{ base_path }/#{ filename }.hosts") }
 
   describe 'simple hosts' do
 
     it "shouldn't change a simple file" do
 
-      subject.parse(simple_hosts_filename).should match '127.0.0.1 localhost'
+      subject.parse(filename).should match '127.0.0.1 localhost'
 
     end
 
     it 'should prepend the filename as a comment' do
 
-      subject.parse(simple_hosts_filename).should match "# #{ simple_hosts_complete_filename }"
+      subject.parse(filename).should match "# #{ complete_filename }"
 
     end
+  end
 
-    it 'should memoize the result' do
+  describe 'inexistent file' do
 
-      first_result = subject.parse(simple_hosts_filename)
+    let(:filename) { 'inexistent' }
 
-      File.stub(:read).with(simple_hosts_complete_filename).and_raise("it shouldn't need to read file again")
+    it 'should return an error' do
 
-      subject.parse(simple_hosts_filename).should == first_result
+      subject.parse(filename).should match '# ERROR'
 
     end
 
@@ -37,14 +38,11 @@ describe Hostesse::SimpleTemplateEngine do
 
   describe 'includes' do
 
-    let(:include_hosts_filename)          { 'include' }
-    let(:include_hosts_complete_filename) { complete_filename(include_hosts_filename) }
+    let(:filename) { 'include' }
+
+    it 'should include a file' do
+      subject.parse(filename).should match '127.0.0.1 localhost'
+    end
 
   end
-
-  private
-
-    def complete_filename(filename)
-      File.expand_path("#{ base_path }/#{ filename }.hosts")
-    end
 end
