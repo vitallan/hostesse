@@ -56,6 +56,15 @@ describe Hostesse::SimpleTemplateEngine do
           parsed_file.should match '# ERROR'
         end
       end
+
+      describe 'two files include each other' do
+
+        let(:filename) { 'simple_cycle_1' }
+
+        it 'should avoid an infinite loop' do
+          parsed_file.should match '# ERROR'
+        end
+      end
     end
   end
 end

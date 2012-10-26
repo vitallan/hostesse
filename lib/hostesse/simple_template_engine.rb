@@ -10,12 +10,13 @@ module Hostesse
 
     def parse(filename)
       complete_filename = complete_filename(filename)
-      if @parsed_files.include? complete_filename
-        @parsed_files[complete_filename]
-      else
+
+      unless @parsed_files.include? complete_filename
         @parsed_files[complete_filename] = '# ERROR: infinite loop'
         @parsed_files[complete_filename] = prefix(complete_filename) + content(complete_filename)
       end
+
+      @parsed_files[complete_filename]
     end
 
     private
