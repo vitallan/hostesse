@@ -53,11 +53,20 @@ while line = Readline.readline('hostesse> ', true).strip
           puts "There is a error in your hosts definition. See #{ target_file } for more details"
         end
       }
+
     rescue Errno::EACCES
       puts "#{ target_file } isn't writable, hosts not saved!"
       puts
       puts 'Solve this by running hostesse as root or changing'
       puts "the permissions for #{ target_file }"
+
+    rescue => e
+      puts 'Something went terribly wrong!'
+      puts
+      puts 'Please report this error with the following message:'
+      puts
+      puts e
+      puts e.backtrace
     end
   end
 end
