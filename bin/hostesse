@@ -23,7 +23,7 @@ WELCOME
 
 stty_save = `stty -g`.chomp
 trap('INT') do
-  puts "\n\nThanks for using hostess!\n:)\n\n"
+  puts "\n\nThanks for using hostesse!\n:)\n\n"
   system('stty', stty_save)
   exit
 end
