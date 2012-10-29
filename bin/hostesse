@@ -2,9 +2,16 @@
 
 require 'hostesse'
 require 'readline'
+require 'rbconfig'
+
+# thanks StackOverflow
+# http://stackoverflow.com/questions/4871309/what-is-the-correct-way-to-detect-if-ruby-is-running-on-windows
+is_windows = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+
+DEFAULT_TARGET_FILE = is_windows ? 'C:/windows/system32/drivers/etc/hosts' : '/etc/hosts'
 
 current_hosts = ''
-target_file   = File.expand_path(ARGV[0] || '/etc/hosts')
+target_file   = File.expand_path(ARGV[0] || DEFAULT_TARGET_FILE)
 
 puts <<-WELCOME
 
@@ -21,10 +28,8 @@ WELCOME
 
 # handle ctrl+c gracefully
 
-stty_save = `stty -g`.chomp
 trap('INT') do
   puts "\n\nThanks for using hostesse!\n:)\n\n"
-  system('stty', stty_save)
   exit
 end
 
