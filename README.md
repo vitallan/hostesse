@@ -79,7 +79,7 @@ will result in:
 ```
 
 JRuby
-=====
+-----
 
 Since 0.0.7 hostesse has support for JRuby. Get the latest version [here](https://www.dropbox.com/sh/8p6cbbcaoyv23u7/4HdIrrxVuQ/hostesse-java).
 
