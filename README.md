@@ -9,6 +9,8 @@ Define multiple hosts files for your machine using a templating engine and easil
 Installation
 ------------
 
+### RubyGem (recommended)
+
 Install the gem:
 
 ```bash
@@ -20,6 +22,14 @@ Create a directory for the hosts definitions:
 ```bash
 $ mkdir hosts
 ```
+
+### Java
+
+Since 0.0.7 hostesse has support for JRuby. Get the latest version [here](https://www.dropbox.com/sh/8p6cbbcaoyv23u7/4HdIrrxVuQ/hostesse-java).
+
+To execute, run `java -jar hostesse-x.x.x.jar`, where `x.x.x` is the version.
+
+[warbler](https://github.com/jruby/warbler) is used to package it as a jar. If you want to pack it yourself, run `warble` from the base directory of the project.
 
 Usage
 -----
@@ -77,12 +87,3 @@ will result in:
 
 127.0.0.1 someotherproject
 ```
-
-JRuby
------
-
-Since 0.0.7 hostesse has support for JRuby. Get the latest version [here](https://www.dropbox.com/sh/8p6cbbcaoyv23u7/4HdIrrxVuQ/hostesse-java).
-
-To execute, run `java -jar hostesse-x.x.x.jar`, where `x.x.x` is the version.
-
-[warbler](https://github.com/jruby/warbler) is used to package it as a jar. If you want to pack it yourself, run `warble` from the base directory of the project.
