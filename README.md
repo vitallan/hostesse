@@ -25,7 +25,7 @@ $ mkdir hosts
 
 ### Java
 
-Since 0.0.7 hostesse has support for JRuby. Get the latest version [here](https://www.dropbox.com/sh/8p6cbbcaoyv23u7/4HdIrrxVuQ/hostesse-java).
+Since 0.0.7 hostesse has support for JRuby. Get the latest version [here](https://github.com/leafac/hostesse/downloads).
 
 To execute, run `java -jar hostesse-x.x.x.jar`, where `x.x.x` is the version.
 
