@@ -1,22 +1,15 @@
 #!/usr/bin/env ruby
 
 require 'hostesse'
+require 'hostesse/cli'
 require 'readline'
-require 'rbconfig'
-
-# thanks StackOverflow
-# http://stackoverflow.com/questions/4871309/what-is-the-correct-way-to-detect-if-ruby-is-running-on-windows
-IS_WINDOWS = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
-IS_JRUBY   = RUBY_PLATFORM == 'java'
-
-DEFAULT_TARGET_FILE = IS_WINDOWS ? 'C:/windows/system32/drivers/etc/hosts' : '/etc/hosts'
 
 current_hosts = ''
-target_file   = File.expand_path(ARGV[0] || DEFAULT_TARGET_FILE)
+target_file   = File.expand_path(ARGV[0] || Hostesse::Cli::Environment.default_target_file)
 
 puts <<-WELCOME
 
-Welcome to hostesse (#{ Hostesse::VERSION }#{ IS_JRUBY ? '-java' : '' })!
+Welcome to hostesse (#{ Hostesse::VERSION }#{ Hostesse::Cli::Environment.is_jruby? ? '-java' : '' })!
 
 The current target file is #{ target_file }. Note that you need permission to write in this file!
 
