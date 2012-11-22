@@ -1,5 +1,4 @@
-#encoding: UTF-8
-require 'spec_helper.rb'
+require 'spec_helper'
 
 describe Hostesse::SimpleTemplateEngine do
 
@@ -88,28 +87,6 @@ describe Hostesse::SimpleTemplateEngine do
         parsed_file.should match '# { commented_include }'
       end
 
-    end
-  end
-
-  describe 'accents' do
-
-    let(:filename) { 'accent' }
-
-    it 'should handle accents properly' do
-
-      parsed_file.should match '# çã'
-
-    end
-
-    describe 'include accents' do
-
-      let(:filename) { 'include_accents' }
-
-      it 'should handle accents in includes properly' do
-
-        parsed_file.should match '# çã'
-
-      end
     end
   end
 end
