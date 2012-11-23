@@ -2,15 +2,14 @@ require 'readline'
 
 require 'hostesse'
 require 'hostesse/cli/messages'
-require 'hostesse/cli/manager'
 
 module Hostesse
   class Cli
     def initialize
-      @manager  = Hostesse::Cli::Manager.new(ARGV[0] || Hostesse::Environment.default_target_file, '.')
+      @manager  = Hostesse::Manager.new(ARGV[0] || Hostesse::Environment.default_target_file, '.')
       @messages = Hostesse::Cli::Messages.new(@manager)
 
-      trap('INT') { @manager.at_exit } # handle ctrl+c
+      trap('INT') { exit } # handle ctrl+c
 
       Readline.completion_append_character = ''
       Readline.completion_proc             = ->(s) {
@@ -32,7 +31,7 @@ module Hostesse
       loop do
         line = Readline.readline(@messages.ps1, true)
 
-        @manager.at_exit unless line
+        exit unless line
 
         begin
           if @manager.change_hosts(line.strip)
@@ -45,5 +44,12 @@ module Hostesse
         end
       end
     end
+
+    private
+
+      def exit
+        puts Hostesse::Cli::Messages.exit
+        Kernel.exit!
+      end
   end
 end

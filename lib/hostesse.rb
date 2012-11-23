@@ -1,5 +1,6 @@
 require 'hostesse/simple_template_engine'
 require 'hostesse/environment'
+require 'hostesse/manager'
 require 'hostesse/version'
 
 module Hostesse
