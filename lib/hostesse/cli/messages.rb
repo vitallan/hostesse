@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Hostesse
   class Cli
     class Messages
@@ -25,11 +26,16 @@ module Hostesse
       def ps1
         'hostesse' +
         (@cli.current_hosts_definition ? " [#{ @cli.current_hosts_definition }]" : '') +
+        (@cli.errors_in_target_file? ? '✗' : '') +
         '> '
       end
 
-      def error_in_definition_file
-        "There is a error in your hosts definition. See #{ @cli.target_file } for more details"
+      def change_hosts
+        if @cli.errors_in_target_file?
+          "There is a error in your hosts definition. See #{ @cli.target_file } for more details"
+        else
+          "Hosts changed to #{ @cli.current_hosts_definition }"
+        end
       end
 
       def error_target_file_isnt_writable

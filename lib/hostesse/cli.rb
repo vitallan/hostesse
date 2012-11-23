@@ -4,6 +4,11 @@ module Hostesse
   class Cli
     attr_reader :target_file, :pwd
 
+    def initialize(target_file, pwd)
+      self.target_file = target_file
+      self.pwd         = pwd
+    end
+
     def current_hosts_definition
       match = File.read(target_file).split("\n").first.match(/^#\s+(.*)/)
       if match && ( complete_filename = match[1] ).match(/^#{ pwd }/)
@@ -13,9 +18,17 @@ module Hostesse
       end
     end
 
-    def initialize(target_file, pwd)
-      self.target_file = target_file
-      self.pwd         = pwd
+    def change_hosts(filename)
+      ''.tap do |parsed_hosts|
+        File.open(target_file, 'w') do |generated_hosts|
+          parsed_hosts = Hostesse::SimpleTemplateEngine.new(pwd).parse(filename)
+          generated_hosts.write(parsed_hosts)
+        end
+      end
+    end
+
+    def errors_in_target_file?
+      File.read(target_file) =~ /ERROR/
     end
 
     def target_file=(target_file)

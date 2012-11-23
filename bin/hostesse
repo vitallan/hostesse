@@ -26,25 +26,20 @@ Readline.completion_proc             = ->(s) {
   }.compact
 }
 
+new_hosts_file = cli.current_hosts_definition || ''
+
 while line = Readline.readline(messages.ps1, true)
-  current_hosts = line.strip unless line.strip.empty?
+  line.strip!
+  new_hosts_file = line unless line.empty?
 
-  unless current_hosts.empty?
+  unless new_hosts_file.empty?
     begin
-      File.open(cli.target_file, 'w') do |generated_hosts|
-        parsed_hosts = Hostesse::SimpleTemplateEngine.new(cli.pwd).parse(current_hosts)
-        generated_hosts.write(parsed_hosts)
-        if parsed_hosts =~ /ERROR/
-          puts messages.error_in_definition_file
-        end
-      end
-
+      cli.change_hosts(new_hosts_file)
+      puts messages.change_hosts
     rescue Errno::EACCES
       puts messages.error_target_file_isnt_writable
-
     rescue => error
       puts messages.error_very_bad_error(error)
-
     end
   end
 end
