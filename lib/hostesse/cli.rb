@@ -1,48 +1,49 @@
+require 'readline'
+
+require 'hostesse'
 require 'hostesse/cli/messages'
+require 'hostesse/cli/manager'
 
 module Hostesse
   class Cli
-    attr_reader :target_file, :pwd
+    def initialize
+      @manager  = Hostesse::Cli::Manager.new(ARGV[0] || Hostesse::Environment.default_target_file, '.')
+      @messages = Hostesse::Cli::Messages.new(@manager)
 
-    def initialize(target_file, pwd)
-      self.target_file = target_file
-      self.pwd         = pwd
+      trap('INT') { @manager.at_exit } # handle ctrl+c
+
+      Readline.completion_append_character = ''
+      Readline.completion_proc             = ->(s) {
+        Dir[s + '*'].map { |inode|
+          if File.directory? inode
+            inode + '/'
+          elsif inode =~ /#{ Regexp.quote(Hostesse::DEFAULT_HOSTS_FILE_SUFFIX) }$/
+            inode[0..-Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size.succ]
+          else
+            nil
+          end
+        }.compact
+      }
+
+      puts @messages.welcome
     end
 
-    def current_hosts_definition
-      match = File.read(target_file).split("\n").first.match(/^#\s+(.*)/)
-      if match && ( complete_filename = match[1] ).match(/^#{ pwd }/)
-        complete_filename[(pwd.size.succ)...(- Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size)]
-      else
-        nil
-      end
-    end
+    def main_loop
+      loop do
+        line = Readline.readline(@messages.ps1, true)
 
-    def change_hosts(filename)
-      filename = current_hosts_definition if filename.empty?
+        @manager.at_exit unless line
 
-      if filename
-        File.open(target_file, 'w') do |generated_hosts|
-          generated_hosts.write(Hostesse::SimpleTemplateEngine.new(pwd).parse(filename))
+        begin
+          if @manager.change_hosts(line.strip)
+            puts @messages.change_hosts
+          end
+        rescue Errno::EACCES
+          puts @messages.error_target_file_isnt_writable
+        rescue => error
+          puts @messages.error_very_bad_error(error)
         end
       end
-    end
-
-    def errors_in_target_file?
-      File.read(target_file) =~ /ERROR/
-    end
-
-    def target_file=(target_file)
-      @target_file = File.expand_path(target_file)
-    end
-
-    def pwd=(pwd)
-      @pwd = File.expand_path(pwd)
-    end
-
-    def at_exit
-      puts Hostesse::Cli::Messages.exit
-      Kernel.exit!
     end
   end
 end
