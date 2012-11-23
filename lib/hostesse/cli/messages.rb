@@ -34,7 +34,7 @@ module Hostesse
         if @cli.errors_in_target_file?
           "There is a error in your hosts definition. See #{ @cli.target_file } for more details"
         else
-          "Hosts changed to #{ @cli.current_hosts_definition }"
+          "Hosts changed or updated! (#{ @cli.current_hosts_definition })"
         end
       end
 

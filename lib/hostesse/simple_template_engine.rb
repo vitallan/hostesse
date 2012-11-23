@@ -18,6 +18,10 @@ module Hostesse
       @parsed_files[complete_filename]
     end
 
+    def clear
+      @parsed_files.clear
+    end
+
     private
 
       def complete_filename(filename)
