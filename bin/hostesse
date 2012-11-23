@@ -26,21 +26,16 @@ Readline.completion_proc             = ->(s) {
   }.compact
 }
 
-new_hosts_file = cli.current_hosts_definition || ''
-
 while line = Readline.readline(messages.ps1, true)
-  line.strip!
-  new_hosts_file = line unless line.empty?
 
-  unless new_hosts_file.empty?
-    begin
-      cli.change_hosts(new_hosts_file)
+  begin
+    if cli.change_hosts(line.strip)
       puts messages.change_hosts
-    rescue Errno::EACCES
-      puts messages.error_target_file_isnt_writable
-    rescue => error
-      puts messages.error_very_bad_error(error)
     end
+  rescue Errno::EACCES
+    puts messages.error_target_file_isnt_writable
+  rescue => error
+    puts messages.error_very_bad_error(error)
   end
 end
 

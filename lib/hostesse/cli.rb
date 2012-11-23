@@ -19,10 +19,11 @@ module Hostesse
     end
 
     def change_hosts(filename)
-      ''.tap do |parsed_hosts|
+      filename = current_hosts_definition if filename.empty?
+
+      if filename
         File.open(target_file, 'w') do |generated_hosts|
-          parsed_hosts = Hostesse::SimpleTemplateEngine.new(pwd).parse(filename)
-          generated_hosts.write(parsed_hosts)
+          generated_hosts.write(Hostesse::SimpleTemplateEngine.new(pwd).parse(filename))
         end
       end
     end
