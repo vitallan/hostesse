@@ -10,12 +10,14 @@ module Hostesse
     end
 
     def current_hosts_definition
-      match = File.read(target_file).split("\n").first
-      match = match.match(/^#\s+(.*)/) if match
-      if match && ( complete_filename = match[1] ).match(/^#{ base_dir }/)
-        complete_filename[base_dir.size.succ...- Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size]
-      else
-        nil
+      if File.exists? target_file
+        match = File.read(target_file).split("\n").first
+        match = match.match(/^#\s+(.*)/) if match
+        if match && ( complete_filename = match[1] ).match(/^#{ base_dir }/)
+          complete_filename[base_dir.size.succ...- Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size]
+        else
+          nil
+        end
       end
     end
 
@@ -31,7 +33,7 @@ module Hostesse
     end
 
     def errors_in_target_file?
-      File.read(target_file) =~ /ERROR/
+      File.read(target_file) =~ /ERROR/ if File.exists? target_file
     end
 
     def target_file=(target_file)
