@@ -1,16 +1,17 @@
 module Hostesse
   class Manager
-    attr_reader :target_file, :pwd
 
-    def initialize(target_file, pwd)
+    attr_reader :target_file, :base_dir
+
+    def initialize(target_file, base_dir)
       self.target_file = target_file
-      self.pwd         = pwd
+      self.base_dir    = base_dir
     end
 
     def current_hosts_definition
       match = File.read(target_file).split("\n").first.match(/^#\s+(.*)/)
-      if match && ( complete_filename = match[1] ).match(/^#{ pwd }/)
-        complete_filename[(pwd.size.succ)...(- Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size)]
+      if match && ( complete_filename = match[1] ).match(/^#{ base_dir }/)
+        complete_filename[(base_dir.size.succ)...(- Hostesse::DEFAULT_HOSTS_FILE_SUFFIX.size)]
       else
         nil
       end
@@ -21,7 +22,7 @@ module Hostesse
 
       if filename
         File.open(target_file, 'w') do |generated_hosts|
-          generated_hosts.write(Hostesse::SimpleTemplateEngine.new(pwd).parse(filename))
+          generated_hosts.write(Hostesse::SimpleTemplateEngine.new(base_dir).parse(filename))
         end
       end
     end
@@ -34,8 +35,8 @@ module Hostesse
       @target_file = File.expand_path(target_file)
     end
 
-    def pwd=(pwd)
-      @pwd = File.expand_path(pwd)
+    def base_dir=(base_dir)
+      @base_dir = File.expand_path(base_dir)
     end
   end
 end

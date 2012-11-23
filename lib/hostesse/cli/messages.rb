@@ -13,7 +13,7 @@ module Hostesse
 
           The current target file is #{ @cli.target_file }. Note that you need permission to write in this file!
 
-          The current working directory is #{ @cli.pwd }.
+          The current base directory is #{ @cli.base_dir }.
 
           To change hosts, type the name of the file, without the .hosts suffix.
           Tab completion should help you in this.

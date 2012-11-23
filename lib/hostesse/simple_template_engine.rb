@@ -1,8 +1,8 @@
 module Hostesse
   class SimpleTemplateEngine
 
-    def initialize(base_path, hosts_file_suffix = Hostesse::DEFAULT_HOSTS_FILE_SUFFIX)
-      @base_path         = File.expand_path base_path
+    def initialize(base_dir, hosts_file_suffix = Hostesse::DEFAULT_HOSTS_FILE_SUFFIX)
+      @base_dir          = File.expand_path base_dir
       @hosts_file_suffix = hosts_file_suffix
       @parsed_files      = {}
     end
@@ -21,7 +21,7 @@ module Hostesse
     private
 
       def complete_filename(filename)
-        "#{ @base_path }/#{ filename }#{ @hosts_file_suffix }"
+        "#{ @base_dir }/#{ filename }#{ @hosts_file_suffix }"
       end
 
       def prefix(complete_filename)
@@ -46,5 +46,4 @@ module Hostesse
         end
       end
   end
-
 end
