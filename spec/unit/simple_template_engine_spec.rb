@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+# TODO: clear
+# TODO: include localhost
+
 describe Hostesse::SimpleTemplateEngine do
 
   subject(:parsed_file)   { engine.parse(filename) }
@@ -88,8 +91,5 @@ describe Hostesse::SimpleTemplateEngine do
       end
 
     end
-
-    # TODO: clear
-    # TODO: include localhost
   end
 end
