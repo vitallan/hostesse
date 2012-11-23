@@ -1,1 +1,1 @@
-require 'hostesse/cli/environment'
+require 'hostesse/cli/messages'

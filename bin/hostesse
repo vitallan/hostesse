@@ -5,27 +5,14 @@ require 'hostesse/cli'
 require 'readline'
 
 current_hosts = ''
-target_file   = File.expand_path(ARGV[0] || Hostesse::Cli::Environment.default_target_file)
+target_file   = File.expand_path(ARGV[0] || Hostesse::Environment.default_target_file)
 
-puts <<-WELCOME
-
-Welcome to hostesse (#{ Hostesse::VERSION }#{ Hostesse::Cli::Environment.is_jruby? ? '-java' : '' })!
-
-The current target file is #{ target_file }. Note that you need permission to write in this file!
-
-To change hosts, type the name of the file, without the .hosts suffix.
-Tab completion should help you in this.
-
-To refresh the hosts, hit enter.
-
-WELCOME
+puts Hostesse::Cli::Messages.welcome(target_file, '.')
+at_exit { puts Hostesse::Cli::Messages.exit }
 
 # handle ctrl+c gracefully
 
-trap('INT') do
-  puts "\n\nThanks for using hostesse!\n:)\n\n"
-  exit
-end
+trap('INT') { exit }
 
 Readline.completion_append_character = ''
 Readline.completion_proc             = ->(s) {
@@ -45,27 +32,20 @@ while line = Readline.readline('hostesse> ', true).strip
 
   unless current_hosts.empty?
     begin
-      File.open(target_file, 'w') { |generated_hosts|
+      File.open(target_file, 'w') do |generated_hosts|
         parsed_hosts = Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts)
         generated_hosts.write(parsed_hosts)
         if parsed_hosts =~ /ERROR/
-          puts "There is a error in your hosts definition. See #{ target_file } for more details"
+          puts Hostesse::Cli::Messages.error_in_definition_file(target_file)
         end
-      }
+      end
 
     rescue Errno::EACCES
-      puts "#{ target_file } isn't writable, hosts not saved!"
-      puts
-      puts 'Solve this by running hostesse as root or changing'
-      puts "the permissions for #{ target_file }"
+      puts Hostesse::Cli::Messages.error_target_file_isnt_writable(target_file)
 
-    rescue => e
-      puts 'Something went terribly wrong!'
-      puts
-      puts 'Please report this error with the following message:'
-      puts
-      puts e
-      puts e.backtrace
+    rescue => error
+      puts Hostesse::Cli::Messages.error_very_bad_error(error)
+
     end
   end
 end
