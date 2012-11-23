@@ -7,12 +7,13 @@ module Hostesse
       @parsed_files      = {}
     end
 
-    def parse(filename)
+    def parse(filename, include_localhost = true)
       complete_filename = complete_filename(filename)
 
       unless @parsed_files.include? complete_filename
         @parsed_files[complete_filename] = '# ERROR: infinite loop'
-        @parsed_files[complete_filename] = prefix(complete_filename) + content(complete_filename)
+        @parsed_files[complete_filename] = prefix(complete_filename, include_localhost) +
+                                           content(complete_filename)
       end
 
       @parsed_files[complete_filename]
@@ -28,8 +29,14 @@ module Hostesse
         "#{ @base_dir }/#{ filename }#{ @hosts_file_suffix }"
       end
 
-      def prefix(complete_filename)
-        "# #{ complete_filename }\n\n"
+      def prefix(complete_filename, include_localhost)
+        "# #{ complete_filename }\n\n" + (include_localhost ?
+          <<-PREFIX.gsub(/^ +/, '')
+            127.0.0.1       localhost.localdomain localhost
+            ::1             localhost.localdomain localhost
+            \n\n
+          PREFIX
+        : '')
       end
 
       def resolve_includes(hosts)
@@ -37,7 +44,7 @@ module Hostesse
           if include_line =~ /^\s*#/
             include_line
           else
-            parse(include_line.match(/\{(.+)\}/)[1].strip)
+            parse(include_line.match(/\{(.+)\}/)[1].strip, false)
           end
         end
       end

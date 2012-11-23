@@ -88,5 +88,8 @@ describe Hostesse::SimpleTemplateEngine do
       end
 
     end
+
+    # TODO: clear
+    # TODO: include localhost
   end
 end
