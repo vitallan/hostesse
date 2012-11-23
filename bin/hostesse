@@ -4,15 +4,14 @@ require 'hostesse'
 require 'hostesse/cli'
 require 'readline'
 
-current_hosts = ''
-target_file   = File.expand_path(ARGV[0] || Hostesse::Environment.default_target_file)
+cli      = Hostesse::Cli.new(ARGV[0] || Hostesse::Environment.default_target_file, '.')
+messages = Hostesse::Cli::Messages.new(cli)
 
-puts Hostesse::Cli::Messages.welcome(target_file, '.')
-at_exit { puts Hostesse::Cli::Messages.exit }
+puts messages.welcome
 
 # handle ctrl+c gracefully
 
-trap('INT') { exit }
+trap('INT') { cli.at_exit }
 
 Readline.completion_append_character = ''
 Readline.completion_proc             = ->(s) {
@@ -27,25 +26,27 @@ Readline.completion_proc             = ->(s) {
   }.compact
 }
 
-while line = Readline.readline('hostesse> ', true).strip
-  current_hosts = line unless line.empty?
+while line = Readline.readline(messages.ps1, true)
+  current_hosts = line.strip unless line.strip.empty?
 
   unless current_hosts.empty?
     begin
-      File.open(target_file, 'w') do |generated_hosts|
-        parsed_hosts = Hostesse::SimpleTemplateEngine.new('.').parse(current_hosts)
+      File.open(cli.target_file, 'w') do |generated_hosts|
+        parsed_hosts = Hostesse::SimpleTemplateEngine.new(cli.pwd).parse(current_hosts)
         generated_hosts.write(parsed_hosts)
         if parsed_hosts =~ /ERROR/
-          puts Hostesse::Cli::Messages.error_in_definition_file(target_file)
+          puts messages.error_in_definition_file
         end
       end
 
     rescue Errno::EACCES
-      puts Hostesse::Cli::Messages.error_target_file_isnt_writable(target_file)
+      puts messages.error_target_file_isnt_writable
 
     rescue => error
-      puts Hostesse::Cli::Messages.error_very_bad_error(error)
+      puts messages.error_very_bad_error(error)
 
     end
   end
 end
+
+cli.at_exit

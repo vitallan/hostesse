@@ -1,21 +1,58 @@
 module Hostesse
-  module Cli
-    module Messages
+  class Cli
+    class Messages
+
+      def initialize(cli)
+        @cli = cli
+      end
+
+      def welcome
+        <<-MESSAGE.gsub(/^ +/, '')
+          Welcome to hostesse (#{ Hostesse::VERSION })!
+
+          The current target file is #{ @cli.target_file }. Note that you need permission to write in this file!
+
+          The current working directory is #{ @cli.pwd }.
+
+          To change hosts, type the name of the file, without the .hosts suffix.
+          Tab completion should help you in this.
+
+          To refresh the hosts, hit enter.
+
+        MESSAGE
+      end
+
+      def ps1
+        'hostesse' +
+        (@cli.current_hosts_definition ? " [#{ @cli.current_hosts_definition }]" : '') +
+        '> '
+      end
+
+      def error_in_definition_file
+        "There is a error in your hosts definition. See #{ @cli.target_file } for more details"
+      end
+
+      def error_target_file_isnt_writable
+        <<-MESSAGE.gsub(/^ +/, '')
+          #{ @cli.target_file } isn't writable, hosts not saved!
+
+          Solve this by running hostesse as root or changing
+          the permissions for #{ @cli.target_file }
+        MESSAGE
+      end
+
+      def error_very_bad_error(error)
+        <<-MESSAGE.gsub(/^ +/, '')
+          Something went terribly wrong!
+
+          Please report this error with the following message:
+
+          #{ error }
+          #{ error.backtrace }
+        MESSAGE
+      end
+
       class << self
-        def welcome(target_file, current_dir)
-          <<-MESSAGE.gsub(/^ +/, '')
-            Welcome to hostesse (#{ Hostesse::VERSION })!
-
-            The current target file is #{ target_file }. Note that you need permission to write in this file!
-
-            To change hosts, type the name of the file, without the .hosts suffix.
-            Tab completion should help you in this.
-
-            To refresh the hosts, hit enter.
-
-          MESSAGE
-        end
-
         def exit
           <<-MESSAGE.gsub(/^ +/, '')
 
@@ -23,30 +60,6 @@ module Hostesse
 
             :)
 
-          MESSAGE
-        end
-
-        def error_in_definition_file(target_file)
-          "There is a error in your hosts definition. See #{ target_file } for more details"
-        end
-
-        def error_target_file_isnt_writable(target_file)
-          <<-MESSAGE.gsub(/^ +/, '')
-            #{ target_file } isn't writable, hosts not saved!
-
-            Solve this by running hostesse as root or changing
-            the permissions for #{ target_file }
-          MESSAGE
-        end
-
-        def error_very_bad_error(error)
-          <<-MESSAGE.gsub(/^ +/, '')
-            Something went terribly wrong!
-
-            Please report this error with the following message:
-
-            #{ error }
-            #{ error.backtrace }
           MESSAGE
         end
       end
