@@ -2,6 +2,7 @@ require 'spec_helper'
 
 # TODO: clear
 # TODO: include localhost
+# TODO: filename == '-', returns only localhost
 
 describe Hostesse::SimpleTemplateEngine do
 

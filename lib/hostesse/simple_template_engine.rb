@@ -1,6 +1,12 @@
 module Hostesse
   class SimpleTemplateEngine
 
+    LOCALHOST = <<-PREFIX.gsub(/^ +/, '')
+                  127.0.0.1       localhost.localdomain localhost
+                  ::1             localhost.localdomain localhost
+                  \n\n
+                PREFIX
+
     def initialize(base_dir, hosts_file_suffix = Hostesse::DEFAULT_HOSTS_FILE_SUFFIX)
       @base_dir          = File.expand_path base_dir
       @hosts_file_suffix = hosts_file_suffix
@@ -8,6 +14,8 @@ module Hostesse
     end
 
     def parse(filename, include_localhost = true)
+      return LOCALHOST if filename == '-'
+
       complete_filename = complete_filename(filename)
 
       unless @parsed_files.include? complete_filename
@@ -30,13 +38,7 @@ module Hostesse
       end
 
       def prefix(complete_filename, include_localhost)
-        "# #{ complete_filename }\n\n" + (include_localhost ?
-          <<-PREFIX.gsub(/^ +/, '')
-            127.0.0.1       localhost.localdomain localhost
-            ::1             localhost.localdomain localhost
-            \n\n
-          PREFIX
-        : '')
+        "# #{ complete_filename }\n\n" + (include_localhost ? LOCALHOST : '')
       end
 
       def resolve_includes(hosts)
