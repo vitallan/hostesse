@@ -18,8 +18,10 @@ module Hostesse
           To change hosts, type the name of the file, without the .hosts suffix.
           Tab completion should help you in this.
 
-          To refresh the hosts, hit enter.
+          To empty the hosts definition, type `-`.
 
+          To refresh the hosts, hit enter.
+          \n\n
         MESSAGE
       end
 
