@@ -49,7 +49,7 @@ module Hostesse
 
       def exit
         puts Hostesse::Cli::Messages.exit
-        Kernel.exit!
+        Kernel.exit
       end
   end
 end
