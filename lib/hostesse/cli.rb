@@ -48,8 +48,7 @@ module Hostesse
     private
 
       def exit
-        puts Hostesse::Cli::Messages.exit
-        Kernel.exit
+        Kernel.abort Hostesse::Cli::Messages.exit
       end
   end
 end
